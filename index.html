@@ -221,9 +221,8 @@ document.getElementById("setBtn").onclick = () => {
   );
 
   if (target.getTime() <= Date.now()) {
-    alert("Heure déjà passée");
-    return;
-  }
+  target.setDate(target.getDate() + 1);
+}
 
   targetTime = target.getTime();
   statusEl.textContent = "STANDBY";
