@@ -230,7 +230,7 @@ document.getElementById("setBtn").onclick = () => {
   if (target.getTime() <= Date.now()) {
   target.setDate(target.getDate() + 1);
 }
-
+document.getElementById("endTimeDisplay").textContent = `Fin : ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
   targetTime = target.getTime();
   statusEl.textContent = "STANDBY";
   updateCountdown();
