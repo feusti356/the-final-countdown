@@ -217,7 +217,7 @@ function stop() {
 document.getElementById("setBtn").onclick = () => {
   const value = document.getElementById("endTime").value;
   if (!value) return;
-
+document.getElementById("targetTimeDisplay").textContent = "Cible : " + value;
   const [h, m] = value.split(":").map(Number);
   const now = new Date();
   const target = new Date(
