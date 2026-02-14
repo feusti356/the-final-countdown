@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+un  <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -164,7 +164,6 @@ function saveState() {
   localStorage.setItem("targetTime", targetTime);
   localStorage.setItem("running", running);
 }
-localStorage.setItem("targetDisplay", value);
 function loadState() {
   const savedTime = localStorage.getItem("targetTime");
   const savedRunning = localStorage.getItem("running");
@@ -190,7 +189,7 @@ function updateCountdown() {
     statusEl.textContent = "FINISHED";
     return;
   }
-
+localStorage.setItem("targetDisplay", value);
   const h = String(Math.floor(diff / 3600000)).padStart(2, "0");
   const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
   const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
