@@ -164,7 +164,7 @@ function saveState() {
   localStorage.setItem("targetTime", targetTime);
   localStorage.setItem("running", running);
 }
-
+localStorage.setItem("targetDisplay", value);
 function loadState() {
   const savedTime = localStorage.getItem("targetTime");
   const savedRunning = localStorage.getItem("running");
