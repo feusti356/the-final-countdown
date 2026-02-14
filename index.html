@@ -1,4 +1,4 @@
-un  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -141,7 +141,8 @@ button:hover {
   </div>
 
   <div id="countdown">00:00:00</div>
-<div id="endTimeDisplay">Fin : --:--</div>
+  <div id="endTimeDisplay">Fin : --:--</div>
+
   <div class="controls">
     <input type="time" id="endTime">
     <button id="setBtn">SET END TIME</button>
@@ -164,7 +165,15 @@ function saveState() {
   localStorage.setItem("targetTime", targetTime);
   localStorage.setItem("running", running);
 }
+
 function loadState() {
+  // AFFICHAGE DE L'HEURE ENREGISTRÉE
+  const savedDisplay = localStorage.getItem("targetDisplay");
+  if (savedDisplay) {
+    document.getElementById("endTimeDisplay").textContent = "Fin : " + savedDisplay;
+  }
+
+  // CHARGEMENT DU TIMER
   const savedTime = localStorage.getItem("targetTime");
   const savedRunning = localStorage.getItem("running");
 
@@ -216,8 +225,12 @@ function stop() {
 document.getElementById("setBtn").onclick = () => {
   const value = document.getElementById("endTime").value;
   if (!value) return;
+
+  // ENREGISTRER L'HEURE LISIBLE
   localStorage.setItem("targetDisplay", value);
-document.getElementById("targetTimeDisplay").textContent = "Cible : " + value;
+
+  document.getElementById("endTimeDisplay").textContent = `Fin : ${value}`;
+
   const [h, m] = value.split(":").map(Number);
   const now = new Date();
   const target = new Date(
@@ -228,9 +241,9 @@ document.getElementById("targetTimeDisplay").textContent = "Cible : " + value;
   );
 
   if (target.getTime() <= Date.now()) {
-  target.setDate(target.getDate() + 1);
-}
-document.getElementById("endTimeDisplay").textContent = `Fin : ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+    target.setDate(target.getDate() + 1);
+  }
+
   targetTime = target.getTime();
   statusEl.textContent = "STANDBY";
   updateCountdown();
@@ -247,6 +260,7 @@ document.getElementById("reset").onclick = () => {
   targetTime = null;
   localStorage.clear();
   countdownEl.textContent = "00:00:00";
+  document.getElementById("endTimeDisplay").textContent = "Fin : --:--";
   statusEl.textContent = "STANDBY";
 };
 
