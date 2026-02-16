@@ -54,6 +54,17 @@ body::before {
   color: #9CA3AF;
   margin-bottom: 20px;
 }
+.time-picker {
+  display: none;
+  margin-bottom: 15px;
+}
+.time-picker input {
+  font-size: 1rem;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  text-align: center;
+}
 .buttons {
   display: flex;
   flex-direction: column;
@@ -78,6 +89,7 @@ body::before {
   .time-remaining { font-size: 2.4rem; }
   .target-time { font-size: 1rem; }
   .buttons button { padding: 12px; font-size: 0.95rem; }
+  .time-picker input { width: 100%; }
 }
 </style>
 </head>
@@ -85,8 +97,14 @@ body::before {
 <div class="countdown-container">
   <div class="time-remaining" id="timeRemaining">00:00:00</div>
   <div class="target-time" id="targetTime">CIBLE : --:--</div>
+  
+  <div class="time-picker" id="timePickerContainer">
+    <input type="time" id="timeInput">
+    <button onclick="confirmTime()" style="margin-top:8px;padding:8px 12px;border-radius:8px;background:#3B82F6;color:#fff;font-weight:bold;border:none;cursor:pointer;">Valider</button>
+  </div>
+  
   <div class="buttons">
-    <button class="btn-primary" onclick="choisirHeure()">CHOISIR L’HEURE</button>
+    <button class="btn-primary" onclick="showTimePicker()">CHOISIR L’HEURE</button>
     <button class="btn-secondary" onclick="startCountdown()">START</button>
     <button class="btn-tertiary" onclick="resetCountdown()">RESET</button>
   </div>
@@ -115,14 +133,20 @@ function updateDisplay() {
   display.textContent = `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
 }
 
-function choisirHeure() {
-  const time = prompt("Entrez l'heure cible (HH:MM, 24h) :", "23:59");
-  if (!time) return;
-  const [h, m] = time.split(":").map(Number);
+function showTimePicker() {
+  document.getElementById("timePickerContainer").style.display = "flex";
+  document.getElementById("timeInput").focus();
+}
+
+function confirmTime() {
+  const timeValue = document.getElementById("timeInput").value;
+  if (!timeValue) return;
+  const [h, m] = timeValue.split(":").map(Number);
   const now = new Date();
   targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
-  if (targetDate < now) targetDate.setDate(targetDate.getDate() + 1); // lendemain si déjà passé
-  document.getElementById("targetTime").textContent = "CIBLE : " + time;
+  if (targetDate < now) targetDate.setDate(targetDate.getDate() + 1);
+  document.getElementById("targetTime").textContent = "CIBLE : " + timeValue;
+  document.getElementById("timePickerContainer").style.display = "none";
   updateDisplay();
 }
 
@@ -137,6 +161,7 @@ function resetCountdown() {
   targetDate = null;
   document.getElementById("timeRemaining").textContent = "00:00:00";
   document.getElementById("targetTime").textContent = "CIBLE : --:--";
+  document.getElementById("timePickerContainer").style.display = "none";
 }
 </script>
 </body>
