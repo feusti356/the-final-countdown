@@ -28,6 +28,7 @@ body::before {
   z-index: 0;
 }
 @keyframes moveLines { 0% { transform: translate(0,0); } 100% { transform: translate(-50px, -50px); } }
+
 .countdown-container {
   position: relative;
   z-index: 1;
@@ -43,20 +44,25 @@ body::before {
   box-shadow: 0 0 20px rgba(255,255,255,0.05);
   text-align: center;
 }
+
 .time-remaining {
   font-size: 3rem;
   color: #FFFFFF;
   margin-bottom: 10px;
-  word-break: break-word;
 }
 .target-time {
   font-size: 1.2rem;
   color: #9CA3AF;
   margin-bottom: 20px;
 }
+
 .time-picker {
   display: none;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 15px;
+  gap: 8px;
+  animation: fadeIn 0.2s ease-out;
 }
 .time-picker input {
   font-size: 1rem;
@@ -64,7 +70,13 @@ body::before {
   border-radius: 8px;
   border: none;
   text-align: center;
+  width: 150px;
 }
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(-5px);}
+  to {opacity:1; transform:translateY(0);}
+}
+
 .buttons {
   display: flex;
   flex-direction: column;
@@ -85,6 +97,7 @@ body::before {
 .btn-primary { background-color: #3B82F6; color: #FFFFFF; }
 .btn-secondary { background-color: #22C55E; color: #FFFFFF; }
 .btn-tertiary { background-color: #374151; color: #FFFFFF; }
+
 @media (max-width: 400px) {
   .time-remaining { font-size: 2.4rem; }
   .target-time { font-size: 1rem; }
@@ -97,12 +110,12 @@ body::before {
 <div class="countdown-container">
   <div class="time-remaining" id="timeRemaining">00:00:00</div>
   <div class="target-time" id="targetTime">CIBLE : --:--</div>
-  
+
   <div class="time-picker" id="timePickerContainer">
     <input type="time" id="timeInput">
-    <button onclick="confirmTime()" style="margin-top:8px;padding:8px 12px;border-radius:8px;background:#3B82F6;color:#fff;font-weight:bold;border:none;cursor:pointer;">Valider</button>
+    <button onclick="confirmTime()" style="padding:8px 12px;border-radius:8px;background:#3B82F6;color:#fff;font-weight:bold;border:none;cursor:pointer;">Valider</button>
   </div>
-  
+
   <div class="buttons">
     <button class="btn-primary" onclick="showTimePicker()">CHOISIR L’HEURE</button>
     <button class="btn-secondary" onclick="startCountdown()">START</button>
@@ -116,17 +129,10 @@ let targetDate = null;
 
 function updateDisplay() {
   const display = document.getElementById("timeRemaining");
-  if (!targetDate) {
-    display.textContent = "00:00:00";
-    return;
-  }
+  if (!targetDate) { display.textContent = "00:00:00"; return; }
   const now = new Date();
   let diff = targetDate - now;
-  if (diff <= 0) {
-    display.textContent = "00:00:00";
-    clearInterval(countdownInterval);
-    return;
-  }
+  if (diff <= 0) { display.textContent = "00:00:00"; clearInterval(countdownInterval); return; }
   const hours = Math.floor(diff / 1000 / 3600);
   const minutes = Math.floor((diff / 1000 % 3600) / 60);
   const seconds = Math.floor(diff / 1000 % 60);
@@ -134,7 +140,8 @@ function updateDisplay() {
 }
 
 function showTimePicker() {
-  document.getElementById("timePickerContainer").style.display = "flex";
+  const picker = document.getElementById("timePickerContainer");
+  picker.style.display = "flex";
   document.getElementById("timeInput").focus();
 }
 
