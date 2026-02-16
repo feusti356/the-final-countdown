@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Favicon / icône -->
+<link rel="icon" type="image/png" href="favicon.png">
 <title>Combien de temps y me reste ?</title>
 <style>
+/* Fond futuriste subtil */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -29,6 +32,7 @@ body::before {
 }
 @keyframes moveLines { 0% { transform: translate(0,0); } 100% { transform: translate(-50px, -50px); } }
 
+/* Conteneur principal */
 .countdown-container {
   position: relative;
   z-index: 1;
@@ -45,6 +49,7 @@ body::before {
   text-align: center;
 }
 
+/* Temps restant et cible */
 .time-remaining {
   font-size: 3rem;
   color: #FFFFFF;
@@ -56,6 +61,7 @@ body::before {
   margin-bottom: 20px;
 }
 
+/* Sélecteur d'heure */
 .time-picker {
   display: none;
   flex-direction: column;
@@ -77,6 +83,7 @@ body::before {
   to {opacity:1; transform:translateY(0);}
 }
 
+/* Boutons */
 .buttons {
   display: flex;
   flex-direction: column;
@@ -98,6 +105,7 @@ body::before {
 .btn-secondary { background-color: #22C55E; color: #FFFFFF; }
 .btn-tertiary { background-color: #374151; color: #FFFFFF; }
 
+/* Responsive iPhone */
 @media (max-width: 400px) {
   .time-remaining { font-size: 2.4rem; }
   .target-time { font-size: 1rem; }
