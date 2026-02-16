@@ -7,7 +7,6 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <title>Combien de temps y me reste ?</title>
 <style>
-/* Fond futuriste subtil */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -32,7 +31,6 @@ body::before {
 }
 @keyframes moveLines { 0% { transform: translate(0,0); } 100% { transform: translate(-50px, -50px); } }
 
-/* Conteneur principal */
 .countdown-container {
   position: relative;
   z-index: 1;
@@ -49,7 +47,6 @@ body::before {
   text-align: center;
 }
 
-/* Temps restant et cible */
 .time-remaining {
   font-size: 3rem;
   color: #FFFFFF;
@@ -61,7 +58,6 @@ body::before {
   margin-bottom: 20px;
 }
 
-/* Sélecteur d'heure */
 .time-picker {
   display: none;
   flex-direction: column;
@@ -83,7 +79,6 @@ body::before {
   to {opacity:1; transform:translateY(0);}
 }
 
-/* Boutons */
 .buttons {
   display: flex;
   flex-direction: column;
@@ -105,7 +100,6 @@ body::before {
 .btn-secondary { background-color: #22C55E; color: #FFFFFF; }
 .btn-tertiary { background-color: #374151; color: #FFFFFF; }
 
-/* Responsive iPhone */
 @media (max-width: 400px) {
   .time-remaining { font-size: 2.4rem; }
   .target-time { font-size: 1rem; }
@@ -135,12 +129,22 @@ body::before {
 let countdownInterval;
 let targetDate = null;
 
+// Charger la date cible depuis localStorage au démarrage
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('targetDate');
+  if (saved) {
+    targetDate = new Date(saved);
+    document.getElementById("targetTime").textContent = "CIBLE : " + targetDate.toTimeString().slice(0,5);
+    startCountdown();
+  }
+});
+
 function updateDisplay() {
   const display = document.getElementById("timeRemaining");
   if (!targetDate) { display.textContent = "00:00:00"; return; }
   const now = new Date();
   let diff = targetDate - now;
-  if (diff <= 0) { display.textContent = "00:00:00"; clearInterval(countdownInterval); return; }
+  if (diff <= 0) { display.textContent = "00:00:00"; clearInterval(countdownInterval); localStorage.removeItem('targetDate'); return; }
   const hours = Math.floor(diff / 1000 / 3600);
   const minutes = Math.floor((diff / 1000 % 3600) / 60);
   const seconds = Math.floor(diff / 1000 % 60);
@@ -162,12 +166,14 @@ function confirmTime() {
   if (targetDate < now) targetDate.setDate(targetDate.getDate() + 1);
   document.getElementById("targetTime").textContent = "CIBLE : " + timeValue;
   document.getElementById("timePickerContainer").style.display = "none";
+  localStorage.setItem('targetDate', targetDate.toString());
   updateDisplay();
 }
 
 function startCountdown() {
   if (!targetDate) { alert("Choisissez d'abord une heure cible !"); return; }
   clearInterval(countdownInterval);
+  updateDisplay();
   countdownInterval = setInterval(updateDisplay, 1000);
 }
 
@@ -177,6 +183,7 @@ function resetCountdown() {
   document.getElementById("timeRemaining").textContent = "00:00:00";
   document.getElementById("targetTime").textContent = "CIBLE : --:--";
   document.getElementById("timePickerContainer").style.display = "none";
+  localStorage.removeItem('targetDate');
 }
 </script>
 </body>
