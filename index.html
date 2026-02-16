@@ -1,270 +1,107 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div class="countdown-container">
+  <!-- Temps restant -->
+  <div class="time-remaining" id="timeRemaining">23:57:57</div>
 
-<title>Countdown System</title>
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="apple-touch-icon" href="favicon.png">
-<!-- PWA / iPhone -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Countdown">
-<link rel="apple-touch-icon" href="icon.png">
+  <!-- Heure cible -->
+  <div class="target-time" id="targetTime">CIBLE : 02:18</div>
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: monospace;
-}
-#endTimeDisplay {
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
-  color: #00ffff;
-  margin-bottom: 10px;
-  text-shadow: 0 0 8px rgba(0, 255, 255, 0.8);
-}
-html, body {
-  width: 100%;
-  height: 100%;
-  background: #000;
-  overflow: hidden;
-  color: #00ffff;
-}
-
-/* Grid cyberpunk */
-body::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    repeating-linear-gradient(0deg, rgba(0,255,255,0.3) 0 1px, transparent 1px 22px),
-    repeating-linear-gradient(90deg, rgba(0,255,255,0.3) 0 1px, transparent 1px 22px);
-  transform: perspective(700px) rotateX(18deg);
-  animation: gridPulse 2s infinite alternate;
-}
-
-@keyframes gridPulse {
-  from { opacity: 0.25; }
-  to   { opacity: 0.45; }
-}
-
-.container {
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 30px;
-}
-
-.status {
-  font-size: 1.2rem;
-  letter-spacing: 2px;
-}
-
-.status span {
-  color: #00ff88;
-}
-
-#countdown {
-  font-size: 5rem;
-  text-shadow:
-    0 0 20px rgba(0,255,255,0.4),
-    0 0 50px rgba(0,255,255,0.4);
-}
-
-.controls {
-  width: 80%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-input[type="time"] {
-  width: 100%;
-  padding: 14px;
-  font-size: 1.1rem;
-  background: #000;
-  color: #00ffff;
-  border: 2px solid #00ffff;
-  border-radius: 25px;
-  text-align: center;
-}
-
-button {
-  padding: 16px;
-  font-size: 1.2rem;
-  border-radius: 25px;
-  cursor: pointer;
-  border: 2px solid;
-  color: white;
-  transition: transform 0.2s;
-}
-
-button:hover {
-  transform: scale(1.05);
-}
-
-#setBtn {
-  background: #00b4ff;
-  border-color: #00ffff;
-  box-shadow: 0 0 25px rgba(0,180,255,0.4);
-}
-
-#startPause {
-  background: #00ff88;
-  border-color: #00ff88;
-  box-shadow: 0 0 25px rgba(0,255,136,0.4);
-}
-
-#reset {
-  background: transparent;
-  border-color: #00ffff;
-  color: #00ffff;
-}
-</style>
-</head>
-
-<body>
-<div class="container">
-
-  <div class="status">
-    SYSTEM STATUS : <span id="systemStatus">STANDBY</span>
+  <!-- Boutons -->
+  <div class="buttons">
+    <button class="btn-primary" onclick="choisirHeure()">CHOISIR L’HEURE</button>
+    <button class="btn-secondary" onclick="startCountdown()">START</button>
+    <button class="btn-tertiary" onclick="resetCountdown()">RESET</button>
   </div>
-
-  <div id="countdown">00:00:00</div>
-  <div id="endTimeDisplay">Fin : --:--</div>
-
-  <div class="controls">
-    <input type="time" id="endTime">
-    <button id="setBtn">SET END TIME</button>
-    <button id="startPause">INITIATE</button>
-    <button id="reset">RESET</button>
-  </div>
-
 </div>
 
+<style>
+  /* Conteneur */
+  .countdown-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #111111; /* fond inchangé */
+    padding: 20px;
+    border-radius: 12px;
+    width: 300px;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Temps restant */
+  .time-remaining {
+    font-size: 3rem;
+    color: #FFFFFF;
+    margin-bottom: 10px;
+  }
+
+  /* Heure cible */
+  .target-time {
+    font-size: 1.2rem;
+    color: #9CA3AF;
+    margin-bottom: 20px;
+  }
+
+  /* Boutons */
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .buttons button {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  /* Bouton principal */
+  .btn-primary {
+    background-color: #3B82F6; /* Choisir l’heure */
+    color: #FFFFFF;
+  }
+
+  /* Bouton secondaire */
+  .btn-secondary {
+    background-color: #22C55E; /* Start */
+    color: #FFFFFF;
+  }
+
+  /* Bouton tertiaire */
+  .btn-tertiary {
+    background-color: #374151; /* Reset */
+    color: #FFFFFF;
+  }
+
+  /* Effet au survol / tactile */
+  .buttons button:hover {
+    opacity: 0.85;
+  }
+</style>
+
 <script>
-let timer = null;
-let targetTime = null;
-let running = false;
-
-const statusEl = document.getElementById("systemStatus");
-const countdownEl = document.getElementById("countdown");
-const startPauseBtn = document.getElementById("startPause");
-
-function saveState() {
-  localStorage.setItem("targetTime", targetTime);
-  localStorage.setItem("running", running);
-}
-
-function loadState() {
-  // AFFICHAGE DE L'HEURE ENREGISTRÉE
-  const savedDisplay = localStorage.getItem("targetDisplay");
-  if (savedDisplay) {
-    document.getElementById("endTimeDisplay").textContent = "Fin : " + savedDisplay;
+  // Remplace ces fonctions par les fonctions existantes de ton application
+  function choisirHeure() {
+    // Exemple : ouvrir ton sélecteur d'heure cible
+    if (typeof openTargetPicker === 'function') {
+      openTargetPicker();
+    }
   }
 
-  // CHARGEMENT DU TIMER
-  const savedTime = localStorage.getItem("targetTime");
-  const savedRunning = localStorage.getItem("running");
-
-  if (savedTime) {
-    targetTime = Number(savedTime);
-    updateCountdown();
+  function startCountdown() {
+    // Exemple : démarrer le compte à rebours
+    if (typeof startExistingCountdown === 'function') {
+      startExistingCountdown();
+    }
   }
 
-  if (savedRunning === "true") {
-    start();
+  function resetCountdown() {
+    // Exemple : réinitialiser le compte à rebours
+    if (typeof resetExistingCountdown === 'function') {
+      resetExistingCountdown();
+    }
   }
-}
-
-function updateCountdown() {
-  if (!targetTime) return;
-
-  const diff = targetTime - Date.now();
-
-  if (diff <= 0) {
-    stop();
-    countdownEl.textContent = "00:00:00";
-    statusEl.textContent = "FINISHED";
-    return;
-  }
-
-  const h = String(Math.floor(diff / 3600000)).padStart(2, "0");
-  const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
-  const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
-
-  countdownEl.textContent = `${h}:${m}:${s}`;
-}
-
-function start() {
-  if (!targetTime) return;
-  running = true;
-  statusEl.textContent = "RUNNING";
-  startPauseBtn.textContent = "PAUSE";
-  timer = setInterval(updateCountdown, 1000);
-  saveState();
-}
-
-function stop() {
-  clearInterval(timer);
-  running = false;
-  startPauseBtn.textContent = "INITIATE";
-  saveState();
-}
-
-document.getElementById("setBtn").onclick = () => {
-  const value = document.getElementById("endTime").value;
-  if (!value) return;
-
-  // ENREGISTRER L'HEURE LISIBLE
-  localStorage.setItem("targetDisplay", value);
-
-  document.getElementById("endTimeDisplay").textContent = `Fin : ${value}`;
-
-  const [h, m] = value.split(":").map(Number);
-  const now = new Date();
-  const target = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    h, m, 0
-  );
-
-  if (target.getTime() <= Date.now()) {
-    target.setDate(target.getDate() + 1);
-  }
-
-  targetTime = target.getTime();
-  statusEl.textContent = "STANDBY";
-  updateCountdown();
-  saveState();
-};
-
-startPauseBtn.onclick = () => {
-  if (!targetTime) return alert("Définis une heure de fin");
-  running ? stop() : start();
-};
-
-document.getElementById("reset").onclick = () => {
-  stop();
-  targetTime = null;
-  localStorage.clear();
-  countdownEl.textContent = "00:00:00";
-  document.getElementById("endTimeDisplay").textContent = "Fin : --:--";
-  statusEl.textContent = "STANDBY";
-};
-
-loadState();
 </script>
-</body>
-</html>
