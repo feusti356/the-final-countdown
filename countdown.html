@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Combien de temps y me reste ?</title>
 <style>
-/* Fond futuriste subtil */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -17,7 +16,6 @@ body {
   align-items: center;
   justify-content: center;
 }
-
 body::before {
   content: "";
   position: absolute;
@@ -29,13 +27,7 @@ body::before {
   animation: moveLines 10s linear infinite;
   z-index: 0;
 }
-
-@keyframes moveLines {
-  0% { transform: translate(0,0); }
-  100% { transform: translate(-50px, -50px); }
-}
-
-/* Conteneur principal */
+@keyframes moveLines { 0% { transform: translate(0,0); } 100% { transform: translate(-50px, -50px); } }
 .countdown-container {
   position: relative;
   z-index: 1;
@@ -51,30 +43,23 @@ body::before {
   box-shadow: 0 0 20px rgba(255,255,255,0.05);
   text-align: center;
 }
-
-/* Temps restant */
 .time-remaining {
   font-size: 3rem;
   color: #FFFFFF;
   margin-bottom: 10px;
   word-break: break-word;
 }
-
-/* Heure cible */
 .target-time {
   font-size: 1.2rem;
   color: #9CA3AF;
   margin-bottom: 20px;
 }
-
-/* Boutons */
 .buttons {
   display: flex;
   flex-direction: column;
   gap: 12px;
   width: 100%;
 }
-
 .buttons button {
   padding: 14px;
   border: none;
@@ -84,19 +69,11 @@ body::before {
   cursor: pointer;
   transition: opacity 0.2s ease, transform 0.1s ease;
 }
-
 .buttons button:hover,
-.buttons button:active {
-  opacity: 0.85;
-  transform: scale(0.98);
-}
-
-/* Couleurs selon priorité */
+.buttons button:active { opacity: 0.85; transform: scale(0.98); }
 .btn-primary { background-color: #3B82F6; color: #FFFFFF; }
 .btn-secondary { background-color: #22C55E; color: #FFFFFF; }
 .btn-tertiary { background-color: #374151; color: #FFFFFF; }
-
-/* Responsive iPhone */
 @media (max-width: 400px) {
   .time-remaining { font-size: 2.4rem; }
   .target-time { font-size: 1rem; }
@@ -105,27 +82,62 @@ body::before {
 </style>
 </head>
 <body>
-  <div class="countdown-container">
-    <div class="time-remaining" id="timeRemaining">23:57:57</div>
-    <div class="target-time" id="targetTime">CIBLE : 02:18</div>
-    <div class="buttons">
-      <button class="btn-primary" onclick="choisirHeure()">CHOISIR L’HEURE</button>
-      <button class="btn-secondary" onclick="startCountdown()">START</button>
-      <button class="btn-tertiary" onclick="resetCountdown()">RESET</button>
-    </div>
+<div class="countdown-container">
+  <div class="time-remaining" id="timeRemaining">00:00:00</div>
+  <div class="target-time" id="targetTime">CIBLE : --:--</div>
+  <div class="buttons">
+    <button class="btn-primary" onclick="choisirHeure()">CHOISIR L’HEURE</button>
+    <button class="btn-secondary" onclick="startCountdown()">START</button>
+    <button class="btn-tertiary" onclick="resetCountdown()">RESET</button>
   </div>
+</div>
 
-  <script>
-    // Fonctions branchées aux boutons
-    function choisirHeure() {
-      if (typeof openTargetPicker === 'function') { openTargetPicker(); }
-    }
-    function startCountdown() {
-      if (typeof startExistingCountdown === 'function') { startExistingCountdown(); }
-    }
-    function resetCountdown() {
-      if (typeof resetExistingCountdown === 'function') { resetExistingCountdown(); }
-    }
-  </script>
+<script>
+let countdownInterval;
+let targetDate = null;
+
+function updateDisplay() {
+  const display = document.getElementById("timeRemaining");
+  if (!targetDate) {
+    display.textContent = "00:00:00";
+    return;
+  }
+  const now = new Date();
+  let diff = targetDate - now;
+  if (diff <= 0) {
+    display.textContent = "00:00:00";
+    clearInterval(countdownInterval);
+    return;
+  }
+  const hours = Math.floor(diff / 1000 / 3600);
+  const minutes = Math.floor((diff / 1000 % 3600) / 60);
+  const seconds = Math.floor(diff / 1000 % 60);
+  display.textContent = `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+}
+
+function choisirHeure() {
+  const time = prompt("Entrez l'heure cible (HH:MM, 24h) :", "23:59");
+  if (!time) return;
+  const [h, m] = time.split(":").map(Number);
+  const now = new Date();
+  targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+  if (targetDate < now) targetDate.setDate(targetDate.getDate() + 1); // lendemain si déjà passé
+  document.getElementById("targetTime").textContent = "CIBLE : " + time;
+  updateDisplay();
+}
+
+function startCountdown() {
+  if (!targetDate) { alert("Choisissez d'abord une heure cible !"); return; }
+  clearInterval(countdownInterval);
+  countdownInterval = setInterval(updateDisplay, 1000);
+}
+
+function resetCountdown() {
+  clearInterval(countdownInterval);
+  targetDate = null;
+  document.getElementById("timeRemaining").textContent = "00:00:00";
+  document.getElementById("targetTime").textContent = "CIBLE : --:--";
+}
+</script>
 </body>
 </html>
