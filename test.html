@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Countdown - 5h Walk Test</title>
 <style>
-
 body {
   margin: 0;
   padding: 0;
@@ -21,7 +22,23 @@ body {
 #countdown {
   font-size: 72px;
   font-weight: 700;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
+}
+
+/* Boutons */
+button {
+  font-size: 18px;
+  padding: 12px 20px;
+  margin: 8px;
+  border-radius: 12px;
+  border: none;
+  background: #1f1f1f;
+  color: white;
+  cursor: pointer;
+}
+button:active {
+  transform: scale(0.96);
+  background: #333;
 }
 
 /* Zone marcheur */
@@ -29,6 +46,7 @@ body {
   width: 90%;
   height: 100px;
   position: relative;
+  margin-top: 20px;
 }
 
 /* Le fil */
@@ -40,7 +58,7 @@ body {
   background: white;
 }
 
-/* Marcheur minimaliste avec bras et jambes */
+/* Marcheur minimaliste */
 .walker {
   position: absolute;
   bottom: 30px;
@@ -78,16 +96,8 @@ body {
   position: absolute;
   top: 12px;
 }
-
-.walker .arm-left {
-  transform: rotate(-45deg);
-  left: 3px;
-}
-
-.walker .arm-right {
-  transform: rotate(45deg);
-  left: 9px;
-}
+.walker .arm-left { transform: rotate(-45deg); left: 3px; }
+.walker .arm-right { transform: rotate(45deg); left: 9px; }
 
 /* Jambes */
 .walker .leg-left, .walker .leg-right {
@@ -97,23 +107,15 @@ body {
   position: absolute;
   top: 30px;
 }
-
-.walker .leg-left {
-  transform: rotate(-20deg);
-  left: 7px;
-}
-
-.walker .leg-right {
-  transform: rotate(20deg);
-  left: 11px;
-}
+.walker .leg-left { transform: rotate(-20deg); left: 7px; }
+.walker .leg-right { transform: rotate(20deg); left: 11px; }
 
 </style>
 </head>
 
 <body>
 
-<div id="countdown">10</div>
+<div id="countdown">05:00:00</div>
 
 <div class="walker-zone">
   <div class="line"></div>
@@ -127,31 +129,57 @@ body {
   </div>
 </div>
 
-<script>
+<div>
+  <button onclick="setTarget()">Définir heure</button>
+  <button onclick="resetCountdown()">Reset</button>
+</div>
 
-let totalTime = 10; // secondes pour le test
+<script>
+// --- Durée de 5 heures ---
+let totalTime = 5 * 60 * 60; // secondes
 let timeLeft = totalTime;
 
 const countdown = document.getElementById("countdown");
 const walker = document.getElementById("walker");
 
-let interval = setInterval(() => {
+// Convertit secondes en HH:MM:SS
+function formatTime(sec) {
+  let h = Math.floor(sec / 3600);
+  let m = Math.floor((sec % 3600) / 60);
+  let s = sec % 60;
+  return String(h).padStart(2,'0') + ":" +
+         String(m).padStart(2,'0') + ":" +
+         String(s).padStart(2,'0');
+}
 
-  timeLeft--;
-
-  countdown.textContent = timeLeft;
-
-  // Calcul de la progression
+// Met à jour le compte à rebours et le marcheur
+function update() {
+  countdown.textContent = formatTime(timeLeft);
   let progress = (totalTime - timeLeft) / totalTime;
   walker.style.left = (progress * 90) + "%";
+}
 
-  if (timeLeft <= 0) {
-    clearInterval(interval);
-  }
+// Boutons
+function setTarget() {
+  let input = prompt("Durée en heures (ex: 5) ?");
+  if (!input) return;
+  totalTime = parseFloat(input) * 3600;
+  timeLeft = totalTime;
+  update();
+}
+function resetCountdown() {
+  timeLeft = totalTime;
+  update();
+}
 
+// Intervalle 1 seconde
+update();
+let interval = setInterval(() => {
+  if (timeLeft > 0) timeLeft--;
+  update();
 }, 1000);
 
 </script>
 
 </body>
-</html> 
+</html>
