@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="Final Countdown">
 
 <style>
-/* --- Styles existants de ton ancien HTML --- */
+/* --- Styles existants de ton HTML stable --- */
 body {
   margin: 0;
   padding: 0;
@@ -26,7 +26,6 @@ body {
   min-height: 100vh;
 }
 
-/* Compteur */
 #countdown {
   font-size: 72px;
   font-weight: 700;
@@ -51,7 +50,7 @@ button:active {
   background: #333;
 }
 
-/* --- Zone marcheur ajoutée --- */
+/* --- Zone marcheur ajoutée en bas --- */
 .walker-zone {
   width: 90%;
   height: 120px;
@@ -60,7 +59,6 @@ button:active {
   margin-bottom: 20px;
 }
 
-/* Fil blanc */
 .line {
   position: absolute;
   bottom: 30px;
@@ -69,7 +67,7 @@ button:active {
   background: white;
 }
 
-/* Marcheur minimaliste Linea-style */
+/* Marcheur minimaliste style Linea */
 .walker {
   position: absolute;
   bottom: 30px;
@@ -78,7 +76,6 @@ button:active {
   transform: translateX(0);
 }
 
-/* Tête */
 .walker .head {
   width: 8px;
   height: 8px;
@@ -89,7 +86,6 @@ button:active {
   left: 6px;
 }
 
-/* Corps */
 .walker .body {
   width: 2px;
   height: 20px;
@@ -99,7 +95,6 @@ button:active {
   left: 9px;
 }
 
-/* Bras */
 .walker .arm-left, .walker .arm-right {
   width: 8px;
   height: 2px;
@@ -110,7 +105,6 @@ button:active {
 .walker .arm-left { transform: rotate(-45deg); left: 3px; }
 .walker .arm-right { transform: rotate(45deg); left: 9px; }
 
-/* Jambes */
 .walker .leg-left, .walker .leg-right {
   width: 2px;
   height: 8px;
@@ -126,7 +120,7 @@ button:active {
 
 <body>
 
-<!-- Compteur principal -->
+<!-- Compteur principal existant -->
 <div id="countdown">00:00:00</div>
 
 <!-- Boutons existants -->
@@ -136,7 +130,7 @@ button:active {
   <button onclick="resetCountdown()">Reset</button>
 </div>
 
-<!-- Zone marcheur ajoutée -->
+<!-- Marcheur ajouté en bas -->
 <div class="walker-zone">
   <div class="line"></div>
   <div class="walker" id="walker">
@@ -150,22 +144,21 @@ button:active {
 </div>
 
 <script>
-// --- JS existant de ton ancien HTML ---
+// --- JS existant de ton HTML stable ---
 let storedTarget = localStorage.getItem("targetTime");
 let targetTime = storedTarget ? parseInt(storedTarget) : null;
 
+// Si aucune cible définie, par défaut 5h
 if (!targetTime) {
   let now = new Date();
-  targetTime = now.getTime() + 5*60*60*1000; // 5h par défaut
+  targetTime = now.getTime() + 5*60*60*1000;
   localStorage.setItem("targetTime", targetTime);
 }
 
 const countdown = document.getElementById("countdown");
 const walker = document.getElementById("walker");
-
 let interval;
 
-// Fonctions Start / Pause / Reset
 function startCountdown() {
   clearInterval(interval);
   interval = setInterval(updateCountdown, 1000);
@@ -180,7 +173,7 @@ function resetCountdown() {
   updateCountdown();
 }
 
-// Mise à jour compteur + marcheur
+// Mise à jour compteur et position marcheur
 function updateCountdown() {
   let now = new Date().getTime();
   let distance = targetTime - now;
@@ -202,16 +195,16 @@ function updateCountdown() {
     String(seconds).padStart(2,'0');
 
   // Déplacement marcheur selon le temps restant
-  let total = targetTime - (targetTime - 5*60*60*1000); // 5h
+  let total = targetTime - (targetTime - 5*60*60*1000);
   let progress = 1 - (distance / total);
   walker.style.left = (progress * 90) + "%";
 }
 
-// Lancer la mise à jour initiale
+// Initialisation
 updateCountdown();
 interval = setInterval(updateCountdown, 1000);
 
 </script>
 
 </body>
-</html> 
+</html>
