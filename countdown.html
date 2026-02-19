@@ -4,8 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Final Countdown</title>
+
+<!-- Icône et Web App iPhone -->
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Final Countdown">
+
 <style>
-/* --- Base --- */
+/* --- Base stable --- */
 body {
   margin: 0;
   padding: 0;
@@ -49,11 +56,11 @@ button:active {
   width: 90%;
   height: 120px;
   position: relative;
-  margin-top: auto; /* pousse le marcheur vers le bas */
+  margin-top: auto;
   margin-bottom: 20px;
 }
 
-/* Le fil */
+/* Fil blanc */
 .line {
   position: absolute;
   bottom: 30px;
@@ -119,13 +126,17 @@ button:active {
 
 <body>
 
+<!-- Compteur principal -->
 <div id="countdown">00:00:00</div>
 
+<!-- Boutons existants -->
 <div>
-  <button onclick="setTarget()">Définir heure</button>
+  <button onclick="startCountdown()">Start</button>
+  <button onclick="pauseCountdown()">Pause</button>
   <button onclick="resetCountdown()">Reset</button>
 </div>
 
+<!-- Zone marcheur ajoutée -->
 <div class="walker-zone">
   <div class="line"></div>
   <div class="walker" id="walker">
@@ -143,41 +154,34 @@ button:active {
 let storedTarget = localStorage.getItem("targetTime");
 let targetTime = storedTarget ? parseInt(storedTarget) : null;
 
-// --- Pour test, on met 5 heures si rien défini ---
+// Si rien n'est défini, départ par défaut 1h
 if (!targetTime) {
   let now = new Date();
-  targetTime = now.getTime() + 5*60*60*1000; // 5 heures
+  targetTime = now.getTime() + 60*60*1000; // 1h
   localStorage.setItem("targetTime", targetTime);
 }
 
 const countdown = document.getElementById("countdown");
 const walker = document.getElementById("walker");
 
-// Fonction pour définir une nouvelle heure cible
-function setTarget() {
-  let input = prompt("Heure cible (HH:MM) ?");
-  if (!input) return;
+let interval;
 
-  let now = new Date();
-  let parts = input.split(":");
-  let target = new Date();
-  target.setHours(parts[0]);
-  target.setMinutes(parts[1]);
-  target.setSeconds(0);
-  if (target < now) target.setDate(target.getDate() + 1);
-
-  targetTime = target.getTime();
-  localStorage.setItem("targetTime", targetTime);
+// Fonctions Start / Pause / Reset
+function startCountdown() {
+  clearInterval(interval);
+  interval = setInterval(updateCountdown, 1000);
 }
-
-// Reset (remet 5h)
+function pauseCountdown() {
+  clearInterval(interval);
+}
 function resetCountdown() {
   let now = new Date();
-  targetTime = now.getTime() + 5*60*60*1000;
+  targetTime = now.getTime() + 60*60*1000;
   localStorage.setItem("targetTime", targetTime);
+  updateCountdown();
 }
 
-// Mise à jour compte à rebours et marcheur
+// Mise à jour compteur + marcheur
 function updateCountdown() {
   let now = new Date().getTime();
   let distance = targetTime - now;
@@ -185,6 +189,7 @@ function updateCountdown() {
   if (distance <= 0) {
     countdown.textContent = "00:00:00";
     walker.style.left = "90%";
+    clearInterval(interval);
     return;
   }
 
@@ -197,17 +202,17 @@ function updateCountdown() {
     String(minutes).padStart(2,'0') + ":" +
     String(seconds).padStart(2,'0');
 
-  // Déplacement marcheur
-  let total = targetTime - (targetTime - 5*60*60*1000); // total 5h
+  // Déplacement marcheur selon le temps
+  let total = targetTime - (targetTime - 60*60*1000); // 1h pour test
   let progress = 1 - (distance / total);
   walker.style.left = (progress * 90) + "%";
 }
 
-// --- Boucle ---
+// Lancer la mise à jour initiale
 updateCountdown();
-setInterval(updateCountdown, 1000);
+interval = setInterval(updateCountdown, 1000);
 
 </script>
 
 </body>
-</html> 
+</html>
