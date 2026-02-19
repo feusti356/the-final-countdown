@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Final Countdown - Test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* === STYLE === */
 body {
   margin: 0;
   padding: 0;
@@ -33,6 +42,7 @@ button {
   border: none;
   background: #1f1f1f;
   color: white;
+  cursor: pointer;
 }
 
 /* Effet pression iPhone-like */
@@ -40,3 +50,75 @@ button:active {
   transform: scale(0.96);
   background: #333;
 }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div id="countdown">--:--:--</div>
+
+  <button onclick="setTarget()">Définir heure</button>
+  <button onclick="resetCountdown()">Reset</button>
+
+</div>
+
+<script>
+/* === LOGIQUE COMPTE À REBOURS === */
+
+let targetTime = localStorage.getItem("targetTime");
+
+function setTarget() {
+  let input = prompt("Heure cible (HH:MM)");
+  if (!input) return;
+
+  let now = new Date();
+  let parts = input.split(":");
+
+  let target = new Date();
+  target.setHours(parts[0]);
+  target.setMinutes(parts[1]);
+  target.setSeconds(0);
+
+  if (target < now) {
+    target.setDate(target.getDate() + 1);
+  }
+
+  localStorage.setItem("targetTime", target.getTime());
+  targetTime = target.getTime();
+}
+
+function resetCountdown() {
+  localStorage.removeItem("targetTime");
+  targetTime = null;
+  document.getElementById("countdown").innerText = "--:--:--";
+}
+
+function updateCountdown() {
+  if (!targetTime) return;
+
+  let now = new Date().getTime();
+  let distance = targetTime - now;
+
+  if (distance <= 0) {
+    document.getElementById("countdown").innerText = "00:00:00";
+    return;
+  }
+
+  let hours = Math.floor(distance / (1000 * 60 * 60));
+  let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  document.getElementById("countdown").innerText =
+    String(hours).padStart(2,'0') + ":" +
+    String(minutes).padStart(2,'0') + ":" +
+    String(seconds).padStart(2,'0');
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+</script>
+
+</body>
+</html>
